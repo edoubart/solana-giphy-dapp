@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# Solana GIPHY
+
+Solana GIPHY is a Web3 version of GIPHY.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
