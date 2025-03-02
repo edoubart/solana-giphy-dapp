@@ -1,4 +1,4 @@
-# Solana GIPHY
+# Solana GIPHY Dapp (Frontend)
 
 Solana GIPHY is a Web3 version of GIPHY.
 
