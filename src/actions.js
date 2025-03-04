@@ -20,12 +20,12 @@ const opts = {
 };
 
 // Helpers
-function getBaseAccount() {
+function getGifsAccount() {
   const arr = Object.values(kp._keypair.secretKey);
   const secret = new Uint8Array(arr);
-  const baseAccount = web3.Keypair.fromSecretKey(secret);
+  const gifsAccount = web3.Keypair.fromSecretKey(secret);
 
-  return baseAccount;
+  return gifsAccount;
 }
 
 function getProgram() {
@@ -96,29 +96,33 @@ async function connectWallet() {
 /************
  * Accounts *
  ************/
-async function createGifAccount() {
+async function initializeGifsAccount() {
   try {
     const provider = getProvider();
     const program = getProgram();
-    const baseAccount = getBaseAccount();
+    const gifsAccount = getGifsAccount();
 
-    const tx = await program.rpc.startStuffOff({
+    const tx = await program.rpc.initialize({
       accounts: {
-        baseAccount: baseAccount.publicKey,
+        gifsAccount: gifsAccount.publicKey,
         user: provider.wallet.publicKey,
         systemProgram: web3.SystemProgram.programId,
       },
       signers: [
-        baseAccount,
+        gifsAccount,
       ],
     });
 
     console.log('tx: ', tx);
 
-    console.log("Created a new Base Account w/ address: ", baseAccount.publicKey.toString());
+    const publicKey = gifsAccount.publicKey.toString();
+
+    console.log("Created a new Base Account w/ address: ", publicKey);
+
+    return publicKey;
   }
   catch(error) {
-    console.log("Error creating BaseAccount account: ", error);
+    console.log("Error creating GifsAccount account: ", error);
   }
 }
 
@@ -129,11 +133,11 @@ async function createGif(gif) {
   try {
     const provider = getProvider();
     const program = getProgram();
-    const baseAccount = getBaseAccount();
+    const gifsAccount = getGifsAccount();
 
-    const tx = await program.rpc.addGif(gif.url, {
+    const tx = await program.rpc.createGif(gif.url, {
       accounts: {
-        baseAccount: baseAccount.publicKey,
+        gifsAccount: gifsAccount.publicKey,
         user: provider.wallet.publicKey,
       },
     });
@@ -152,12 +156,12 @@ async function listGifs() {
   try {
     const provider = getProvider();
     const program = getProgram();
-    const baseAccount = getBaseAccount();
+    const gifsAccount = getGifsAccount();
 
-    const account = await program.account.baseAccount
-      .fetch(baseAccount.publicKey);
+    const account = await program.account.gifsAccount
+      .fetch(gifsAccount.publicKey);
 
-    return account.gifList;
+    return account.gifs;
   }
   catch(error) {
     console.error("Something went wrong listing GIFs: ", error);
@@ -174,7 +178,8 @@ export {
   /************
    * Accounts *
    ************/
-  createGifAccount,
+  getGifsAccount,
+  initializeGifsAccount,
 
   /********
    * GIFs *

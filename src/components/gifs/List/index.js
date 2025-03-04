@@ -28,7 +28,7 @@ function ListGifs(props) {
   function renderGif(gif, index) {
     return (
       <div className="gif-gif" key={index}>
-        <img src={gif.gifLink} alt={gif.gifLink} />
+        <img src={gif.url} alt={gif.url} />
       </div>
     );
   }

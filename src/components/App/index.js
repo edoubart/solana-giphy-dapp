@@ -4,9 +4,9 @@ import { Buffer } from 'buffer';
 
 // Custom Modules
 import { ConnectWallet } from './../wallet';
-import { InitializeGifAccount } from './../accounts';
+import { InitializeGifsAccount } from './../accounts';
 import { CreateGif, ListGifs } from './../gifs';
-import { checkIfWalletIsConnected } from './../../actions';
+import { checkIfWalletIsConnected, getGifsAccount } from './../../actions';
 
 // Styles
 import './index.css';
@@ -21,13 +21,15 @@ window.Buffer = Buffer;
 function App() {
   // State
   const [ walletAddress, setWalletAddress ] = useState(null);
-  const [ baseAccountAddress, setBaseAccountAddress ] = useState(null);
-  const [ gifList, setGifList ] = useState([]);
+  const [ gifsAccountAddress, setGifsAccountAddress ] = useState(null);
+  //const [ gifs, setGifs ] = useState([]);
 
   // Hooks
   useEffect(() => {
     const onLoad = async () => {
-      await checkIfWalletIsConnected();
+      const publicKey = await checkIfWalletIsConnected();
+
+      setWalletAddress(publicKey);
     }
 
     window.addEventListener('load', onLoad);
@@ -35,26 +37,40 @@ function App() {
     return () => window.removeEventListener('load', onLoad);
   }, []);
 
-  //useEffect(() => {
-  //  if (walletAddress) {
-  //    //fetchBaseAccountAddress();
+  useEffect(() => {
+    if (walletAddress) {
+      const gifsAccount = getGifsAccount()
+      const publicKey = gifsAccount.publicKey.toString();
 
-  //    //getGifList();
-  //  }
-  //}, [ walletAddress ]);
+      console.log('publicKey: ', publicKey);
+
+      setGifsAccountAddress(publicKey);
+    }
+  }, [ walletAddress ]);
 
   // Handlers
   function handleConnectWallet(publicKey) {
     setWalletAddress(publicKey);
   }
 
+  function handleInitializeGifsAccount(publicKey) {
+    setGifsAccountAddress(publicKey);
+  }
+
   // Renderers
   function renderConnectedContainer() {
     let result;
 
-    if (gifList == null) {
+    if (!gifsAccountAddress) {
       result = (
-        <InitializeGifAccount />
+        <InitializeGifsAccount
+          data={{
+            gifsAccountAddress,
+          }}
+          handlers={{
+            initializeGifsAccount: handleInitializeGifsAccount,
+          }}
+        />
       );
     }
     else {

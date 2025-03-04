@@ -1,6 +1,6 @@
 // Custom Modules
-import InitializeGifAccount from './InitializeGif';
+import InitializeGifsAccount from './InitializeGifs';
 
 export {
-  InitializeGifAccount,
+  InitializeGifsAccount,
 };
